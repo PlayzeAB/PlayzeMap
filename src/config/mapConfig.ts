@@ -28,29 +28,29 @@ export const baseMapLayers: MapLayer[] = [
 
 // Project-specific layer definitions
 export const projectLayers: MapLayer[] = [
-  {
-    id: 'project-area',
-    title: 'Projektområde',
-    type: 'overlay' as const,
-    visible: true,
-    opacity: 1,
-    source: {
-      type: 'GeoJSON' as const,
-      url: '/data/project_area.geojson'
+    {
+      id: 'project-area',
+      title: 'Projektområde',
+      type: 'overlay' as const,
+      visible: true,
+      opacity: 1,
+      source: {
+        type: 'GeoJSON' as const,
+        url: '/data/project_area.geojson' // Make sure this path is correct
+      }
+    },
+    {
+      id: 'utredning-area',
+      title: 'Utredningsområde',
+      type: 'overlay' as const,
+      visible: true,
+      opacity: 1,
+      source: {
+        type: 'GeoJSON' as const,
+        url: '/data/utredning_omrade.geojson' // Make sure this path is correct
+      }
     }
-  },
-  {
-    id: 'utredning-area',
-    title: 'Utredningsområde',
-    type: 'overlay' as const,
-    visible: true,
-    opacity: 1,
-    source: {
-      type: 'GeoJSON' as const,
-      url: '/data/utredning_omrade.geojson'
-    }
-  }
-];
+  ];
 
 // Layer group configurations
 export const layerGroups: LayerGroup[] = [
