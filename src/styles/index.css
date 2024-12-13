@@ -1,0 +1,9 @@
+@import 'ol/ol.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles below */
+/* OpenLayers styles */
+
+/* Add any additional custom styles here */

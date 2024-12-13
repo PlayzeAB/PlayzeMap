@@ -1,0 +1,8 @@
+{
+"type": "FeatureCollection",
+  "name": "project_area",
+  "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::5857" } },
+"features": [
+{ "type": "Feature", "properties": { "fid": 1, "Namn": "Översikt", "område": "1", "x_koordinat": null, "y_koordinat": null }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 141115.26914317641058, 7448818.264609017409384 ], [ 158619.274616299080662, 7448753.911647719331086 ], [ 158683.627577597333584, 7425265.080773860216141 ], [ 140974.634078158880584, 7425522.492619053460658 ], [ 141115.26914317641058, 7448818.264609017409384 ] ] ] } }
+]
+}
