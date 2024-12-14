@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Search as SearchIcon, X, Loader2 } from 'lucide-react';
 import { fromLonLat } from 'ol/proj';
+import proj4 from 'proj4';
 
 interface SearchResult {
   display_name: string;
@@ -18,6 +19,9 @@ const MapSearch: React.FC<MapSearchProps> = ({ onSelectLocation }) => {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+
+  // Define projection if not already defined
+  proj4.defs("EPSG:5857","+proj=tmerc +lat_0=0 +lon_0=23.25 +k=1 +x_0=150000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
 
   const handleSearch = async () => {
     if (!searchTerm) return;
@@ -37,11 +41,29 @@ const MapSearch: React.FC<MapSearchProps> = ({ onSelectLocation }) => {
   };
 
   const handleSelectLocation = (result: SearchResult) => {
-    const coords = fromLonLat([parseFloat(result.lon), parseFloat(result.lat)]);
-    onSelectLocation(coords);
-    setSearchTerm(result.display_name);
-    setResults([]);
-    setIsExpanded(false);
+    // Convert from WGS84 (EPSG:4326) to your target projection (EPSG:5857)
+    const sourceCoords = [parseFloat(result.lon), parseFloat(result.lat)];
+    
+    try {
+      // First convert to EPSG:3857 (Web Mercator) which OpenLayers uses internally
+      const webMercatorCoords = fromLonLat(sourceCoords);
+      
+      // Then convert to EPSG:5857
+      const targetCoords = proj4('EPSG:3857', 'EPSG:5857', webMercatorCoords);
+      
+      console.log('Coordinate transformation:', {
+        original: sourceCoords,
+        webMercator: webMercatorCoords,
+        target: targetCoords
+      });
+
+      onSelectLocation(targetCoords);
+      setSearchTerm(result.display_name);
+      setResults([]);
+      setIsExpanded(false);
+    } catch (error) {
+      console.error('Coordinate transformation failed:', error);
+    }
   };
 
   return (
