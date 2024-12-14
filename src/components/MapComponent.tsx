@@ -21,15 +21,19 @@ import { EventsKey } from 'ol/events';
 import LayerMenu from './LayerMenu';
 import MapToolbox from './MapToolbox';
 import MapSearch from './MapSearch';
+import WindTurbinePlanner from './WindTurbinePlanner';
 import { MapControls } from '../utils/MapControls';
 import { Map as MapIcon } from 'lucide-react';
 import { layerGroups as initialLayerGroups, mapConfig } from '../config/mapConfig';
 import { LayerGroup } from '../types/map';
 
-// Define projections
+// Define projections once at the module level
 proj4.defs("EPSG:5857","+proj=tmerc +lat_0=0 +lon_0=23.25 +k=1 +x_0=150000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
 proj4.defs("EPSG:3006","+proj=utm +zone=33 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
 register(proj4);
+
+// Create vectorSource at the module level
+const vectorSource = new VectorSource();
 
 interface MapComponentProps {
   config: typeof mapConfig;
@@ -38,7 +42,6 @@ interface MapComponentProps {
 const MapComponent: React.FC<MapComponentProps> = ({ config }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<Map | null>(null);
-  const [vectorSource] = useState(new VectorSource());
   const [activeControl, setActiveControl] = useState<string | null>(null);
   const [mapControls, setMapControls] = useState<MapControls | null>(null);
   const [layerGroups, setLayerGroups] = useState<LayerGroup[]>(initialLayerGroups);
@@ -133,15 +136,28 @@ const MapComponent: React.FC<MapComponentProps> = ({ config }) => {
     }
 
     setActiveControl(toolId);
-  }, [map, mapControls, activeControl, clickListener, vectorSource]);
+  }, [map, mapControls, activeControl, clickListener]);
 
   useEffect(() => {
+    // Check if map is already initialized
+    if (map) return;
+
     if (!mapRef.current) {
       console.warn('mapRef.current is null');
       return;
     }
 
     console.log('Initializing map...');
+    console.log('Map container dimensions:', {
+      width: mapRef.current.clientWidth,
+      height: mapRef.current.clientHeight
+    });
+
+    // Check projections
+    console.log('Available projections:', {
+      '5857': !!getProjection('EPSG:5857'),
+      '3006': !!getProjection('EPSG:3006')
+    });
 
     const layers = layerGroups.flatMap(group => 
       group.layers.map(layerConfig => {
@@ -221,8 +237,8 @@ const MapComponent: React.FC<MapComponentProps> = ({ config }) => {
       }),
     });
 
-    console.log('Map created:', newMap);
-
+    console.log('Map initialized with size:', newMap.getSize());
+    
     setMap(newMap);
     setMapControls(new MapControls(newMap));
 
@@ -232,7 +248,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ config }) => {
       }
       newMap.setTarget(undefined);
     };
-  }, [config, vectorSource]);
+  }, []); // Empty dependency array - only run once
 
   useEffect(() => {
     const handleEsc = (event: KeyboardEvent) => {
@@ -260,7 +276,11 @@ const MapComponent: React.FC<MapComponentProps> = ({ config }) => {
       </div>
 
       <div className="relative flex-1">
-        <div ref={mapRef} className="w-full h-full" />
+        <div 
+          ref={mapRef} 
+          className="w-full h-full" 
+          style={{ position: 'relative', overflow: 'hidden' }}
+        />
         
         <MapSearch 
           onSelectLocation={(coords) => {
@@ -289,6 +309,8 @@ const MapComponent: React.FC<MapComponentProps> = ({ config }) => {
           onLayerToggle={handleLayerToggle}
           onOpacityChange={handleOpacityChange}
         />
+
+        <WindTurbinePlanner map={map} />
       </div>
     </div>
   );
