@@ -28,29 +28,47 @@ export const baseMapLayers: MapLayer[] = [
 
 // Project-specific layer definitions
 export const projectLayers: MapLayer[] = [
-    {
-      id: 'project-area',
-      title: 'Projektområde',
-      type: 'overlay' as const,
-      visible: true,
-      opacity: 1,
-      source: {
-        type: 'GeoJSON' as const,
-        url: '/data/project_area.geojson' // Make sure this path is correct
-      }
-    },
-    {
-      id: 'utredning-area',
-      title: 'Utredningsområde',
-      type: 'overlay' as const,
-      visible: true,
-      opacity: 1,
-      source: {
-        type: 'GeoJSON' as const,
-        url: '/data/utredning_omrade.geojson' // Make sure this path is correct
+  {
+    id: 'project-area',
+    title: 'Projektområde',
+    type: 'overlay' as const,
+    visible: true,
+    opacity: 1,
+    source: {
+      type: 'GeoJSON' as const,
+      url: '/data/project_area.geojson'
+    }
+  },
+  {
+    id: 'utredning-area',
+    title: 'Utredningsområde',
+    type: 'overlay' as const,
+    visible: true,
+    opacity: 1,
+    source: {
+      type: 'GeoJSON' as const,
+      url: '/data/utredning_omrade.geojson'
+    }
+  },
+  {
+    id: 'vaghallare',
+    title: 'Väghållare',
+    type: 'overlay' as const,
+    visible: true,
+    opacity: 0.7,
+    source: {
+      type: 'WMS' as const,
+      url: 'https://geo-netinfo.trafikverket.se/mapservice/wms.axd/NetInfo',
+      params: {
+        LAYERS: 'CR,BS',
+        VERSION: '1.1.1',
+        FORMAT: 'image/png',
+        TRANSPARENT: true,
+        SRS: 'EPSG:3006'  // Lägg till denna rad
       }
     }
-  ];
+  }
+];
 
 // Layer group configurations
 export const layerGroups: LayerGroup[] = [
@@ -83,5 +101,4 @@ export const mapConfig = {
   }
 } as const;
 
-// Export type for the config
 export type MapConfigType = typeof mapConfig;
