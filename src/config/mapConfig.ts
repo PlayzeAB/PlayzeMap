@@ -1,6 +1,5 @@
 import { LayerGroup, MapLayer } from '../types/map';
 
-// Base map layer definitions
 export const baseMapLayers: MapLayer[] = [
   {
     id: 'osm',
@@ -10,6 +9,18 @@ export const baseMapLayers: MapLayer[] = [
     opacity: 1,
     source: {
       type: 'OSM' as const
+    }
+  },
+  {
+    id: 'satellite',
+    title: 'Satellite',
+    type: 'base' as const,
+    visible: false,
+    opacity: 1,
+    source: {
+      type: 'XYZ' as const,
+      url: 'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
+      attribution: '© Google Satellite'
     }
   },
   {
@@ -25,31 +36,9 @@ export const baseMapLayers: MapLayer[] = [
     }
   }
 ];
-
 // Project-specific layer definitions
 export const projectLayers: MapLayer[] = [
-  {
-    id: 'project-area',
-    title: 'Projektområde',
-    type: 'overlay' as const,
-    visible: true,
-    opacity: 1,
-    source: {
-      type: 'GeoJSON' as const,
-      url: '/data/project_area.geojson'
-    }
-  },
-  {
-    id: 'utredning-area',
-    title: 'Utredningsområde',
-    type: 'overlay' as const,
-    visible: true,
-    opacity: 1,
-    source: {
-      type: 'GeoJSON' as const,
-      url: '/data/utredning_omrade.geojson'
-    }
-  },
+
   {
     id: 'vaghallare',
     title: 'Väghållare',
